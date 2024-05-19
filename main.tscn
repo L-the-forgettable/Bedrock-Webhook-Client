@@ -1,0 +1,76 @@
+[gd_scene load_steps=5 format=3 uid="uid://b326gy0nprs5r"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_e0bgr"]
+[ext_resource type="Script" path="res://extension/websocket_server.gd" id="2_gel8u"]
+[ext_resource type="Script" path="res://extension/UUIDGenerator.gd" id="3_bfhyq"]
+[ext_resource type="PackedScene" uid="uid://d1n4wigp0hyfg" path="res://player_map.tscn" id="4_x0g4s"]
+
+[node name="main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_e0bgr")
+
+[node name="main_container" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="playerList_container" type="VBoxContainer" parent="main_container"]
+layout_mode = 2
+
+[node name="playerList_title" type="Label" parent="main_container/playerList_container"]
+layout_mode = 2
+text = "Player list:"
+
+[node name="playerList_scroll" type="ScrollContainer" parent="main_container/playerList_container"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="playerList_main" type="Label" parent="main_container/playerList_container/playerList_scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="chat_container" type="VBoxContainer" parent="main_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="chatScroll_container" type="ScrollContainer" parent="main_container/chat_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+follow_focus = true
+
+[node name="chat" type="Label" parent="main_container/chat_container/chatScroll_container"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+vertical_alignment = 2
+
+[node name="chat_server" type="LineEdit" parent="main_container/chat_container"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Chat message"
+
+[node name="WebSocketServer" type="Node" parent="."]
+script = ExtResource("2_gel8u")
+server_port = 59874
+
+[node name="UUID" type="Node" parent="."]
+script = ExtResource("3_bfhyq")
+
+[node name="cordsUpdate_timer" type="Timer" parent="."]
+
+[node name="PlayerMap" parent="." instance=ExtResource("4_x0g4s")]
+initial_position = 1
+visible = false
+
+[connection signal="text_submitted" from="main_container/chat_container/chat_server" to="." method="_server_chat_send"]
+[connection signal="client_connected" from="WebSocketServer" to="." method="_on_client_connect"]
+[connection signal="client_disconnected" from="WebSocketServer" to="." method="_on_client_disconnect"]
+[connection signal="data_received" from="WebSocketServer" to="." method="_on_message_received"]

@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1n4wigp0hyfg"]
+
+[ext_resource type="Script" path="res://player_map.gd" id="1_1fhre"]
+
+[node name="PlayerMap" type="Window"]
+position = Vector2i(0, 36)
+script = ExtResource("1_1fhre")
+
+[node name="transform" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[connection signal="window_input" from="." to="." method="_on_transform_gui_input"]
